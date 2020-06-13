@@ -1,0 +1,60 @@
+MODEL:
+  PRETRAIN_CHOICE: 'imagenet'
+  PRETRAIN_PATH: '/root/.cache/torch/checkpoints/se_resnet101_ibn_a.pth.tar'
+  METRIC_LOSS_TYPE: 'triplet_center'
+  IF_LABELSMOOTH: 'on'
+  IF_WITH_CENTER: 'yes'
+  NAME: 'se_resnet101_ibn_a'
+  DEVICE_ID: ('1')
+  ID_LOSS_TYPE: 'arcface'
+  ID_LOSS_WEIGHT: 0.1
+  TRIPLET_LOSS_WEIGHT: 0.9
+  WEIGHTED_TRIPLET: True
+  NO_MARGIN: True
+  THRESH: 0.45
+INPUT:
+  SIZE_TRAIN: [384, 192]
+  SIZE_TEST: [384, 192]
+  PROB: 0.5 # random horizontal flip
+  RE_PROB: 0.5 # random erasing
+  PADDING: 10
+
+DATASETS:
+  NAMES: ('naic')
+  ROOT_DIR: ('../data')
+  HARD_AUG: True
+
+DATALOADER:
+  SAMPLER: 'softmax_triplet'
+  NUM_INSTANCE: 6
+  NUM_WORKERS: 8
+
+SOLVER:
+  OPTIMIZER_NAME: 'Ranger'
+  MAX_EPOCHS: 50
+  BASE_LR: 0.006
+  IMS_PER_BATCH: 96
+  STEPS: [25, 40]
+  GAMMA: 0.1
+  WARMUP_FACTOR: 0.01
+  WARMUP_EPOCHS: 10
+  WARMUP_METHOD: 'linear'
+  LARGE_FC_LR: False
+  CHECKPOINT_PERIOD: 10
+  LOG_PERIOD: 50
+  EVAL_PERIOD: 10000
+  COSINE_MARGIN: 0.4
+  COSINE_SCALE: 30
+  CENTER_LOSS_WEIGHT: 0.0003
+  FP16: False
+
+TEST:
+  IMS_PER_BATCH: 128
+  RE_RANKING: False
+  WEIGHT: '../model/0102-a-se-1/se_resnet101_ibn_a_50.pth'
+  NECK_FEAT: 'before'
+  FEAT_NORM: 'yes'
+  FLIP_FEATS: 'on'
+OUTPUT_DIR: "../model/0102-a-se-1/"
+
+
